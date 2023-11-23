@@ -1,0 +1,69 @@
+DROP DATABASE IF EXISTS SchoolDB;
+CREATE DATABASE SchoolDB;
+
+USE SchoolDB;
+
+CREATE TABLE School (
+    SchoolID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Address VARCHAR(255) NOT NULL,
+    Phone VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL,
+    Website VARCHAR(255) NOT NULL,
+    Principal VARCHAR(255) NOT NULL,
+    VicePrincipal VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Grade (
+    GradeId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    GradeNumber INT,
+    SchoolID INT,
+    FOREIGN KEY (SchoolID) REFERENCES School(SchoolID)
+);
+
+CREATE TABLE Classroom (
+    ClassroomID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    GradeID INT,
+    TeacherID INT,
+    FOREIGN KEY (GradeID) REFERENCES Grade(GradeID),
+    FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID)
+);
+
+CREATE TABLE Teacher (
+    TeacherID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL,
+    Phone VARCHAR(255) NOT NULL,
+    ClassroomID INT,
+    GradeID INT,
+    FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID),
+    FOREIGN KEY (GradeID) REFERENCES Grade(GradeID)
+
+);
+
+CREATE TABLE Student (
+    StudentID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    GradeID INT,
+    ClassroomID INT,
+    TeacherID INT,
+    FOREIGN KEY (GradeID) REFERENCES Grade(GradeID),
+    FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID),
+    FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID)
+);
+
+CREATE TABLE Subject (
+    SubjectID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    SubjectName VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Marks (
+    MarkID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT,
+    SubjectID INT,
+    MarkValue INT,
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    FOREIGN KEY (SubjectID) REFERENCES Subject(SubjectID)
+);
