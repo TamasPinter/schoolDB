@@ -31,8 +31,7 @@ CREATE TABLE Classroom (
 
 CREATE TABLE Teacher (
     TeacherID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(255) NOT NULL,
-    LastName VARCHAR(255) NOT NULL,
+    TeacherName VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL,
     Phone VARCHAR(255) NOT NULL,
     ClassroomID INT,
@@ -44,8 +43,7 @@ CREATE TABLE Teacher (
 
 CREATE TABLE Student (
     StudentID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(255) NOT NULL,
-    LastName VARCHAR(255) NOT NULL,
+    StudentName VARCHAR(255) NOT NULL,
     GradeID INT,
     ClassroomID INT,
     TeacherID INT,
