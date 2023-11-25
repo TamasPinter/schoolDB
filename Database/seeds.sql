@@ -215,7 +215,7 @@ VALUES ('Math'),
        ('Science'),
        ('History');
 
-INSERT INTO Marks (StudentID, SubjectID, MarkValue)
+INSERT INTO Mark (StudentID, SubjectID, MarkValue)
        (1, 1, 90),
        (1, 1, 85),
        (1, 1, 70),

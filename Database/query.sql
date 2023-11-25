@@ -17,16 +17,16 @@ select * from Student;
 select * from Subject;
 
 -- view all marks --
-select * from Marks;
+select * from Mark;
 
 -- view school info and join with the average mark from Marks table --
-select School.*, avg(Marks.MarkValue) as avgMark
+select School.*, avg(Mark.MarkValue) as avgMark
 FROM School 
 JOIN Grade ON School.SchoolID = Grade.SchoolID
 JOIN Classroom ON Grade.GradeID = Classroom.GradeID
 JOIN Teacher ON Classroom.TeacherID = Teacher.TeacherID
 JOIN Student ON Classroom.ClassroomID = Student.ClassroomID
-JOIN Marks ON Student.StudentID = Marks.StudentID
+JOIN Mark ON Student.StudentID = Marks.StudentID
 GROUP BY School.SchoolID;
 
 -- view each grade with it's students and teachers --
@@ -50,7 +50,7 @@ FROM Teacher
 JOIN Classroom ON Teacher.TeacherID = Classroom.TeacherID
 JOIN Grade ON Classroom.GradeID = Grade.GradeID
 JOIN Student ON Classroom.ClassroomID = Student.ClassroomID
-JOIN Marks ON Student.StudentID = Marks.StudentID
+JOIN Mark ON Student.StudentID = Mark.StudentID
 GROUP BY Teacher.TeacherID;
 
 -- view Student info and their assigned classroom and teacher with their average mark --
@@ -58,20 +58,20 @@ select Student.StudentID, Student.StudentName, Classroom.ClassroomID, Classroom.
 FROM Student
 JOIN Classroom ON Student.ClassroomID = Classroom.ClassroomID
 JOIN Teacher ON Classroom.TeacherID = Teacher.TeacherID
-JOIN Marks ON Student.StudentID = Marks.StudentID
+JOIN Mark ON Student.StudentID = Mark.StudentID
 GROUP BY Student.StudentID;
 
 -- view all subjects and their average mark across each grade --
-select Subject.SubjectID, Subject.SubjectName, avg(Marks.MarkValue) as avgMark
+select Subject.SubjectID, Subject.SubjectName, avg(Mark.MarkValue) as avgMark
 FROM Subject
-JOIN Marks ON Subject.SubjectID = Marks.SubjectID
+JOIN Mark ON Subject.SubjectID = Mark.SubjectID
 GROUP BY Subject.SubjectID;
 
 -- view all subjects and their average mark across each grade and classroom --
-select Subject.SubjectID, Subject.SubjectName, Grade.GradeID, Grade.GradeName, avg(Marks.MarkValue) as avgMark
+select Subject.SubjectID, Subject.SubjectName, Grade.GradeID, Grade.GradeName, avg(Mark.MarkValue) as avgMark
 FROM Subject
-JOIN Marks ON Subject.SubjectID = Marks.SubjectID
-JOIN Student ON Marks.StudentID = Student.StudentID
+JOIN Mark ON Subject.SubjectID = Mark.SubjectID
+JOIN Student ON Mark.StudentID = Student.StudentID
 JOIN Classroom ON Student.ClassroomID = Classroom.ClassroomID
 JOIN Grade ON Classroom.GradeID = Grade.GradeID
 GROUP BY Subject.SubjectID, Grade.GradeID;
@@ -101,7 +101,7 @@ INSERT INTO Subject (SubjectName)
 VALUES ('(Subject Name)');
 
 -- add a mark --
-INSERT INTO Marks (StudentID, SubjectID, MarkValue)
+INSERT INTO Mark (StudentID, SubjectID, MarkValue)
 VALUES ('(Student ID)', '(Subject ID)', '(Mark Value)');
 
 -- update a school --
@@ -135,7 +135,7 @@ SET SubjectName = '(Subject Name)'
 WHERE SubjectID = '(Subject ID)';
 
 -- update a mark --
-UPDATE Marks
+UPDATE Mark
 SET StudentID = '(Student ID)', SubjectID = '(Subject ID)', MarkValue = '(Mark Value)'
 WHERE MarkID = '(Mark ID)';
 
@@ -164,7 +164,7 @@ DELETE FROM Subject
 WHERE SubjectID = '(Subject ID)';
 
 -- delete a mark --
-DELETE FROM Marks
+DELETE FROM Mark
 WHERE MarkID = '(Mark ID)';
 
 
