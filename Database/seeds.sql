@@ -1,5 +1,5 @@
 INSERT INTO School (Name, Address, Phone, Email, Website, Principal, VicePrincipal)
-VALUES ('St. Augustine Secondary School', '12675 Eagle Ave. Milton, ON', '519-805-9078', 'www.staug.on.edu', 'Henry Rollins', 'Agatha Smith');
+VALUES ('St. Augustine Secondary School', '12675 Eagle Ave. Milton, ON', '519-805-9078', 'staug@edu.on.ca', 'www.staug.on.edu', 'Henry Rollins', 'Agatha Smith');
 
 INSERT INTO Grade (GradeNumber, SchoolID)
 VALUES (1, 1),
@@ -11,25 +11,25 @@ VALUES (1, 1),
        (7, 1),
        (8, 1);
 
-INSERT INTO Classroom (GradeID, TeacherID)
-VALUES (1, 1),
-       (1, 2),
-       (2, 3),
-       (2, 4),
-       (3, 5),
-       (3, 6),
-       (4, 7),
-       (4, 8),
-       (5, 9),
-       (5, 10),
-       (6, 11),
-       (6, 12),
-       (7, 13),
-       (7, 14),
-       (8, 15),
-       (8, 16);
+INSERT INTO Classroom (GradeNumber)
+VALUES (1),
+       (1),
+       (2),
+       (2),
+       (3),
+       (3),
+       (4),
+       (4),
+       (5),
+       (5),
+       (6),
+       (6),
+       (7),
+       (7),
+       (8),
+       (8);
 
-INSERT INTO Teacher (TeacherName, Email, Phone, ClassroomID, GradeID)
+INSERT INTO Teacher (TeacherName, Email, Phone, ClassroomID, GradeNumber)
 VALUES ('Aliza Bounty', 'BountyAliz@edu.ca', '519-805-9021', 1, 1),
        ('Brenda June', 'JuneB@edu.ca', '614-809-7624', 2, 1),
        ('George Rune', 'RuneG@edu.ca', '519-908-1122', 3, 2),
@@ -47,7 +47,24 @@ VALUES ('Aliza Bounty', 'BountyAliz@edu.ca', '519-805-9021', 1, 1),
        ('Oliver West', 'WestO@edu.ca', '675-012-5643', 15, 8),
        ('Peter Parker', 'ParkerP@edu.ca', '999-999-9911', 16, 8);
 
-INSERT INTO Student (StudentName, GradeID, ClassroomID, TeacherID)
+UPDATE Classroom SET TeacherID = 1 WHERE ClassroomID = 1;
+UPDATE Classroom SET TeacherID = 2 WHERE ClassroomID = 2;
+UPDATE Classroom SET TeacherID = 3 WHERE ClassroomID = 3;
+UPDATE Classroom SET TeacherID = 4 WHERE ClassroomID = 4;
+UPDATE Classroom SET TeacherID = 5 WHERE ClassroomID = 5;
+UPDATE Classroom SET TeacherID = 6 WHERE ClassroomID = 6;
+UPDATE Classroom SET TeacherID = 7 WHERE ClassroomID = 7;
+UPDATE Classroom SET TeacherID = 8 WHERE ClassroomID = 8;
+UPDATE Classroom SET TeacherID = 9 WHERE ClassroomID = 9;
+UPDATE Classroom SET TeacherID = 10 WHERE ClassroomID = 10;
+UPDATE Classroom SET TeacherID = 11 WHERE ClassroomID = 11;
+UPDATE Classroom SET TeacherID = 12 WHERE ClassroomID = 12;
+UPDATE Classroom SET TeacherID = 13 WHERE ClassroomID = 13;
+UPDATE Classroom SET TeacherID = 14 WHERE ClassroomID = 14;
+UPDATE Classroom SET TeacherID = 15 WHERE ClassroomID = 15;
+UPDATE Classroom SET TeacherID = 16 WHERE ClassroomID = 16;
+
+INSERT INTO Student (StudentName, GradeNumber, ClassroomID, TeacherID)
 VALUES ('Cindy Moon', 1, 1, 1),
        ('Oliver Peck', 1, 1, 1),
        ('Ralf Moon', 1, 1, 1),
@@ -163,11 +180,7 @@ VALUES ('Cindy Moon', 1, 1, 1),
        ('Winney West', 6, 12, 12),
        ('Ralph Roost', 6, 12, 12),
        ('Moreen Moop', 6, 12, 12),
-       ('Mike Green', 6, 12 12),
-       ('Alice Snow', 6, 12, 12),
-       ('Jane Austin', 6, 12, 12),
-       ('Ricky Martinez', 6, 12, 12),
-       ('Maxine Chernokoff', 6, 12, 12),
+     
        ('Mink Sweet', 7, 13, 13),
        ('Big Leaf', 7, 13, 13),
        ('Running Bear', 7, 13, 13),
@@ -208,15 +221,17 @@ VALUES ('Cindy Moon', 1, 1, 1),
        ('Wanda Sikes', 8, 16, 16),
        ('Olav Iksev', 8, 16, 16),
        ('Mopus Dopus', 8, 16, 16);
+        
+      
 
 INSERT INTO Subject (SubjectName)
-VALUES ('Math'),
+VALUES ("Math"),
        ('English'),
        ('Science'),
        ('History');
 
 INSERT INTO Mark (StudentID, SubjectID, MarkValue)
-       (1, 1, 90),
+VALUES (1, 1, 90),
        (1, 1, 85),
        (1, 1, 70),
        (1, 2, 40),
@@ -408,3 +423,6 @@ INSERT INTO Mark (StudentID, SubjectID, MarkValue)
        (16, 4, 77),
        (16, 4, 25),
        (16, 4, 58);
+       
+
+       

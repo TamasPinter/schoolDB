@@ -19,13 +19,14 @@ CREATE TABLE Grade (
     GradeNumber INT,
     SchoolID INT,
    INDEX (SchoolID),
-   CONSTRAINT fk_School FOREIGN KEY (SchoolID) REFERENCES School(SchoolID) ON DELETE SET NULL
+   CONSTRAINT fk_Grade_School FOREIGN KEY (SchoolID) REFERENCES School(SchoolID) ON DELETE SET NULL
 );
 
 CREATE TABLE Classroom (
     ClassroomID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    GradeID INT,
-    FOREIGN KEY (GradeID) REFERENCES Grade(GradeID)
+    GradeNumber INT,
+    INDEX (GradeNumber),
+    CONSTRAINT fk_Classroom_Grade FOREIGN KEY (GradeNumber) REFERENCES Grade(GradeID) ON DELETE SET NULL
 );
 
 CREATE TABLE Teacher (
@@ -33,19 +34,24 @@ CREATE TABLE Teacher (
     TeacherName VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL,
     Phone VARCHAR(255) NOT NULL,
-    GradeID INT,
-    FOREIGN KEY (GradeID) REFERENCES Grade(GradeID)
+    GradeNumber INT,
+    INDEX (GradeNumber),
+    CONSTRAINT fk_Teacher_Grade FOREIGN KEY (GradeNumber) REFERENCES Grade(GradeID) ON DELETE SET NULL
 );
 
 CREATE TABLE Student (
     StudentID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     StudentName VARCHAR(255) NOT NULL,
-    GradeID INT,
+    GradeNumber INT,
+    INDEX (GradeNumber),
+    CONSTRAINT fk_Student_Grade FOREIGN KEY (GradeNumber) REFERENCES Grade(GradeID) ON DELETE SET NULL,
     ClassroomID INT,
+    INDEX (ClassroomID),
+    CONSTRAINT fk_Student_Classroom FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID),
     TeacherID INT,
-    FOREIGN KEY (GradeID) REFERENCES Grade(GradeID),
-    FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID),
-    FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID)
+    INDEX (TeacherID),
+    CONSTRAINT fk_Student_Teacher FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID)
+
 );
 
 CREATE TABLE Subject (
@@ -56,17 +62,22 @@ CREATE TABLE Subject (
 CREATE TABLE Mark (
     MarkID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     StudentID INT,
+    INDEX (StudentID),
+    CONSTRAINT fk_Mark_Student FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
     SubjectID INT,
-    MarkValue INT,
-    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
-    FOREIGN KEY (SubjectID) REFERENCES Subject(SubjectID)
+    INDEX (SubjectID),
+    CONSTRAINT fk_Mark_Subject FOREIGN KEY (SubjectID) REFERENCES Subject(SubjectID),
+    MarkValue INT
+    
 );
 
 ALTER TABLE Teacher
 ADD COLUMN ClassroomID INT,
+ADD INDEX (ClassroomID),
 ADD FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID);
 
 ALTER TABLE Classroom
 ADD COLUMN TeacherID INT,
+ADD INDEX (TeacherID),
 ADD FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID);
 
