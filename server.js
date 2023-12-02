@@ -28,17 +28,9 @@ const mainMenu = async () => {
           message:
             "Welcome to the School Database! What would you like to do today?\n",
           choices: [
-            "View School Information",
-            "View Grade Information",
-            "View Average Per Grade",
-            "View Classrooms Information",
-            "View Teachers Information",
-            "View All Students",
-            "View All Subjects",
-            "View All Marks",
-            "View Teacher Stats",
-            "View Student Information",
+            "View Information",
             "Add An Item",
+            "Update an Item",
             "Exit\n",
           ],
           pageSize: 15,
@@ -46,38 +38,14 @@ const mainMenu = async () => {
       ])
       .then((answers) => {
         const { choices } = answers;
-        if (choices === "View School Information") {
-          viewSchoolInfo();
-        }
-        if (choices === "View Grade Information") {
-          viewGradeInfo();
-        }
-        if (choices === "View Average Per Grade") {
-          viewAveragePerGrade();
-        }
-        if (choices === "View Classrooms Information") {
-          viewClassInfo();
-        }
-        if (choices === "View Teachers Information") {
-          viewTeacherInfo();
-        }
-        if (choices === "View All Students") {
-          viewStudents();
-        }
-        if (choices === "View All Subjects") {
-          viewSubjects();
-        }
-        if (choices === "View All Marks") {
-          viewMarks();
-        }
-        if (choices === "View Teacher Stats") {
-          viewTeacherStats();
-        }
-        if (choices === "View Student Information") {
-          viewStudentInformationSubMenu();
+        if (choices === "View Information") {
+          viewItemSubMenu();
         }
         if (choices === "Add An Item") {
           addItemSubMenu();
+        }
+        if (choices === "Update an Item") {
+          updateItemSubMenu();
         }
         if (choices === "Exit") {
           connection.end();
@@ -495,6 +463,71 @@ viewGradeEight = async () => {
   });
 };
 
+viewItemSubMenu = async () => {
+  try {
+    const answers = await inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "choices",
+          message: "Select a field to view",
+          choices: [
+            "View School Information",
+            "View Grade Information",
+            "View Average Per Grade",
+            "View Classrooms Information",
+            "View Teachers Information",
+            "View All Students",
+            "View All Subjects",
+            "View All Marks",
+            "View Teacher Stats",
+            "View Student Information",
+            "Go Back",
+          ],
+        },
+      ])
+      .then((answers) => {
+        const { choices } = answers;
+        if (choices === "View School Information") {
+          viewSchoolInfo();
+        }
+        if (choices === "View Grade Information") {
+          viewGradeInfo();
+        }
+        if (choices === "View Average Per Grade") {
+          viewAveragePerGrade();
+        }
+        if (choices === "View Classrooms Information") {
+          viewClassInfo();
+        }
+        if (choices === "View Teachers Information") {
+          viewTeacherInfo();
+        }
+        if (choices === "View All Students") {
+          viewStudents();
+        }
+        if (choices === "View All Subjects") {
+          viewSubjects();
+        }
+        if (choices === "View All Marks") {
+          viewMarks();
+        }
+        if (choices === "View Teacher Stats") {
+          viewTeacherStats();
+        }
+        if (choices === "View Student Information") {
+          viewStudentInformationSubMenu();
+        }
+        if (choices === "Go Back") {
+          mainMenu();
+        }
+      });
+  } catch (error) {
+    console.error(error);
+    mainMenu();
+  }
+};
+
 addItemSubMenu = async () => {
   try {
     const answers = await inquirer.prompt([
@@ -779,4 +812,174 @@ addMark = () => {
         viewMarks();
       });
     });
+};
+
+updateItemSubMenu = async () => {
+  try {
+    const answers = await inquirer.prompt([
+      {
+        type: "list",
+        name: "choices",
+        message: "Select a field to Update",
+        choices: [
+          "Update A School",
+          "Update A Grade",
+          "Update A Classroom",
+          "Update A Teacher",
+          "Update A Student",
+          "Update A Subject",
+          "Update A Mark",
+          "Go Back",
+        ],
+      },
+    ]);
+    const { choices } = answers;
+    if (choices === "Update A School") {
+      updateSchool();
+    }
+    if (choices === "Update A Grade") {
+      updateGrade();
+    }
+    if (choices === "Update A Classroom") {
+      updateClassroom();
+    }
+    if (choices === "Update A Teacher") {
+      updateTeacher();
+    }
+    if (choices === "Update A Student") {
+      updateStudent();
+    }
+    if (choices === "Update A Subject") {
+      updateSubject();
+    }
+    if (choices === "Update A Mark") {
+      updateMark();
+    }
+    if (choices === "Go Back") {
+      mainMenu();
+    }
+  } catch (error) {
+    console.error(error);
+    mainMenu();
+  }
+};
+
+updateSchool = () => {
+  console.log("Updating a School ..\n");
+  const schoolsql = `SELECT * FROM School`;
+  connection.query(schoolsql, (err, resp) => {
+    if (err) throw err;
+    const schools = resp.map(({ SchoolID, Name }) => ({
+      name: Name,
+      value: SchoolID,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_school_SchoolID",
+          message: "Which School would you like to update?",
+          choices: schools,
+        },
+      ])
+      .then((answers) => {
+        const { selected_school_SchoolID } = answers;
+        const selectedSchool = resp.find(
+          (school) => school.SchoolID === selected_school_SchoolID
+        );
+
+        const updateFields = [
+          selectedSchool.Name && "Name = ?",
+          selectedSchool.Address && "Address = ?",
+          selectedSchool.Phone && "Phone = ?",
+          selectedSchool.Email && "Email = ?",
+          selectedSchool.Website && "Website = ?",
+          selectedSchool.Principal && "Principal = ?",
+          selectedSchool.VicePrincipal && "VicePrincipal = ?",
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        const sql = `UPDATE School SET ${updateFields} WHERE SchoolID = ?`;
+
+        const values = [];
+        if (selectedSchool.Name) values.push(selectedSchool.Name);
+        if (selectedSchool.Address) values.push(selectedSchool.Address);
+        if (selectedSchool.Phone) values.push(selectedSchool.Phone);
+        if (selectedSchool.Email) values.push(selectedSchool.Email);
+        if (selectedSchool.Website) values.push(selectedSchool.Website);
+        if (selectedSchool.Principal) values.push(selectedSchool.Principal);
+        if (selectedSchool.VicePrincipal)
+          values.push(selectedSchool.VicePrincipal);
+        values.push(selectedSchool.SchoolID);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "Name",
+              message: "What is the name of the school?",
+            },
+            {
+              type: "input",
+              name: "Address",
+              message: "What is the Address?",
+            },
+            {
+              type: "input",
+              name: "Phone",
+              message: "What is the Phone Number?",
+            },
+            {
+              type: "input",
+              name: "Email",
+              message: "What is the Email?",
+            },
+            {
+              type: "input",
+              name: "Website",
+              message: "What is the school website?",
+            },
+            {
+              type: "input",
+              name: "Principal",
+              message: "What is the Principal's name?",
+            },
+            {
+              type: "input",
+              name: "VicePrincipal",
+              message: "What is the Vice Principal's name?",
+            },
+          ])
+          .then((answers) => {
+            const {
+              Name,
+              Address,
+              Phone,
+              Email,
+              Website,
+              Principal,
+              VicePrincipal,
+            } = answers;
+            connection.query(
+              sql,
+              [
+                Name || selectedSchool.Name,
+                Address || selectedSchool.Address,
+                Phone || selectedSchool.Phone,
+                Email || selectedSchool.Email,
+                Website || selectedSchool.Website,
+                Principal || selectedSchool.Principal,
+                VicePrincipal || selectedSchool.VicePrincipal,
+                selectedSchool.SchoolID,
+              ],
+              (err, resp) => {
+                if (err) throw err;
+                console.log("School Updated");
+                viewSchoolInfo();
+              }
+            );
+          });
+      });
+  });
 };
