@@ -38,7 +38,7 @@ const mainMenu = async () => {
             "View All Marks",
             "View Teacher Stats",
             "View Student Information",
-            "View Grade One",
+            "Add An Item",
             "Exit\n",
           ],
           pageSize: 15,
@@ -76,8 +76,8 @@ const mainMenu = async () => {
         if (choices === "View Student Information") {
           viewStudentInformationSubMenu();
         }
-        if (choices === "View Grade One") {
-          viewGradeOne();
+        if (choices === "Add An Item") {
+          addItemSubMenu();
         }
         if (choices === "Exit") {
           connection.end();
@@ -215,43 +215,6 @@ ORDER BY
   });
 };
 
-const viewStudentInformation = async () => {
-  try {
-    const selectedGrade = await selectGrade(connection);
-    const students = await queryStudentsByGrade(selectedGrade, connection);
-
-    // Display student information (including teacher, class, subjects, and marks)
-    console.table(students);
-
-    // Continue with other actions or return to the main menu
-    mainMenu();
-  } catch (error) {
-    console.error(error);
-    mainMenu();
-  }
-};
-
-const selectGrade = async (connection) => {
-  try {
-    const grades = await queryAllGrades(connection);
-    const gradeChoices = grades.map((grade) => ({
-      name: grade.GradeNumber.toString(),
-      value: grade.GradeNumber,
-    }));
-
-    const selectedGrade = await inquirer.prompt({
-      type: "list",
-      name: "selectedGrade",
-      message: "Select a grade:",
-      choices: gradeChoices,
-    });
-
-    return selectedGrade.selectedGrade;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // Add a submenu for View Student Information
 const viewStudentInformationSubMenu = async () => {
   try {
@@ -279,25 +242,25 @@ const viewStudentInformationSubMenu = async () => {
       await viewGradeOne();
     }
     if (choices === "Grade 2") {
-      viewStudentInformation(2);
+      viewGradeTwo();
     }
     if (choices === "Grade 3") {
-      viewStudentInformation(3);
+      viewGradeThree();
     }
     if (choices === "Grade 4") {
-      viewStudentInformation(4);
+      viewGradeFour();
     }
     if (choices === "Grade 5") {
-      viewStudentInformation(5);
+      viewGradeFive();
     }
     if (choices === "Grade 6") {
-      viewStudentInformation(6);
+      viewGradeSix();
     }
     if (choices === "Grade 7") {
-      viewStudentInformation(7);
+      viewGradeSeven();
     }
     if (choices === "Grade 8") {
-      viewStudentInformation(8);
+      viewGradeEight();
     }
     if (choices === "Go Back") {
       mainMenu();
@@ -309,17 +272,8 @@ const viewStudentInformationSubMenu = async () => {
 };
 
 viewGradeOne = async () => {
-  console.log("View Student Information");
-  const newConnection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: process.env.password,
-    database: "SchoolDB",
-  });
-  try {
-    newConnection.connect();
-
-    const sql = `
+  console.log("View Grade One Students");
+  const sql = `
         SELECT
           s.StudentID,
           s.StudentName,
@@ -338,16 +292,491 @@ viewGradeOne = async () => {
         ORDER BY
           s.StudentID, sub.SubjectID
       `;
-    const resp = await newConnection.promise().query(sql);
-    console.table(resp[0]);
-
-    // Close the connection
-
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
     mainMenu();
-  } catch (err) {
-    console.error(err);
-  }
+  });
+};
 
-  // Return a resolved promise to indicate completion
-  return Promise.resolve();
+viewGradeTwo = async () => {
+  console.log("View Grade Two Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 2
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+viewGradeThree = async () => {
+  console.log("View Grade Three Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 3
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+viewGradeFour = async () => {
+  console.log("View Grade Four Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 4
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+viewGradeFive = async () => {
+  console.log("View Grade Five Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 5
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+viewGradeSix = async () => {
+  console.log("View Grade Six Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 6
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+viewGradeSeven = async () => {
+  console.log("View Grade Seven Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 7
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+viewGradeEight = async () => {
+  console.log("View Grade Eight Students");
+  const sql = `
+  SELECT
+  s.StudentID,
+  s.StudentName,
+  t.TeacherName,
+  sub.SubjectName,
+  AVG(m.MarkValue) AS AverageMark
+  FROM 
+  Student s
+  LEFT JOIN Teacher t ON s.TeacherID = t.TeacherID
+  LEFT JOIN Mark m ON s.StudentID = m.StudentID
+  LEFT JOIN Subject sub ON m.SubjectID = sub.SubjectID
+  WHERE
+  s.GradeNumber = 8
+  GROUP BY
+  s.StudentID, sub.SubjectID
+  ORDER BY
+  s.StudentID, sub.SubjectID
+  `;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
+addItemSubMenu = async () => {
+  try {
+    const answers = await inquirer.prompt([
+      {
+        type: "list",
+        name: "choices",
+        message: "Select a field to Add to",
+        choices: [
+          "Add A School",
+          "Add A Grade",
+          "Add A Classroom",
+          "Add A Teacher",
+          "Add A Student",
+          "Add A Subject",
+          "Add A Mark",
+          "Go Back",
+        ],
+      },
+    ]);
+
+    const { choices } = answers;
+    if (choices === "Add A School") {
+      addSchool();
+    }
+    if (choices === "Add A Grade") {
+      addGrade();
+    }
+    if (choices === "Add A Classroom") {
+      addClassroom();
+    }
+    if (choices === "Add A Teacher") {
+      addTeacher();
+    }
+    if (choices === "Add A Student") {
+      addStudent();
+    }
+    if (choices === "Add A Subject") {
+      addSubject();
+    }
+    if (choices === "Add A Mark") {
+      addMark();
+    }
+    if (choices === "Go Back") {
+      maunMenu();
+    }
+  } catch (error) {
+    console.error(error);
+    mainMenu();
+  }
+};
+
+addSchool = () => {
+  console.log("Adding a New School ..\n");
+  const sql = `INSERT INTO School (Name, Address, Phone, Email, Website, Principal, VicePrincipal) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "Name",
+        message: "What is the name of the school?",
+      },
+      {
+        type: "input",
+        name: "Address",
+        message: "What is the address?",
+      },
+      {
+        type: "input",
+        name: "Phone",
+        message: "What is the phone number?",
+      },
+      {
+        type: "input",
+        name: "Email",
+        message: "What is the school email?",
+      },
+      {
+        type: "input",
+        name: "Website",
+        message: "What is the school website?",
+      },
+      {
+        type: "input",
+        name: "Principal",
+        message: "What is the Principal's name?",
+      },
+      {
+        type: "input",
+        name: "VicePrincipal",
+        message: "What is the Vice Principal's name?",
+      },
+    ])
+    .then((answers) => {
+      const { Name, Address, Phone, Email, Website, Principal, VicePrincipal } =
+        answers;
+      connection.query(
+        sql,
+        [Name, Address, Phone, Email, Website, Principal, VicePrincipal],
+        (err, resp) => {
+          if (err) throw err;
+          console.log("New School Added");
+          viewSchoolInfo();
+        }
+      );
+    });
+};
+
+addGrade = () => {
+  console.log("Adding a New Grade ..\n");
+  const sql = `INSERT INTO Grade (GradeNumber, SchoolID) VALUES (?, ?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "GradeNumber",
+        message: "What Grade are you adding?",
+      },
+      {
+        type: "input",
+        name: "SchoolID",
+        message: "What is the SchoolID this Grade belongs to?",
+      },
+    ])
+    .then((answers) => {
+      const { GradeNumber, SchoolID } = answers;
+      connection.query(sql, [GradeNumber, SchoolID], (err, resp) => {
+        if (err) throw err;
+        console.log("New Grade Added");
+        viewGradeInfo();
+      });
+    });
+};
+
+addClassroom = () => {
+  console.log("Adding a New Classroom ..\n");
+  const sql = `INSERT INTO Classroom (GradeNumber) VALUES (?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "GradeNumber",
+        message: "What grade is in this Classroom?",
+      },
+    ])
+    .then((answers) => {
+      const { GradeNumber } = answers;
+      connection.query(sql, [GradeNumber], (err, resp) => {
+        if (err) throw err;
+        console.log("New Classroom Added");
+        viewClassInfo();
+      });
+    });
+};
+
+addTeacher = () => {
+  console.log("Adding a New Teacher ..\n");
+  const sql = `INSERT INTO Teacher (TeacherName, Email, Phone, GradeNumber) VALUES (?, ?, ?, ?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "TeacherName",
+        message: "What is the Teacher's name?",
+      },
+      {
+        type: "input",
+        name: "Email",
+        message: "What is the Teacher's email?",
+      },
+      {
+        type: "input",
+        name: "Phone",
+        message: "What is the Teacher's Phone Number?",
+      },
+      {
+        type: "input",
+        name: "GradeNumber",
+        message: "What Grade is the Teacher teaching?",
+      },
+    ])
+    .then((answers) => {
+      const { TeacherName, Email, Phone, GradeNumber } = answers;
+      connection.query(
+        sql,
+        [TeacherName, Email, Phone, GradeNumber],
+        (err, resp) => {
+          if (err) throw err;
+          console.log("New Teacher Added");
+          viewTeacherInfo();
+        }
+      );
+    });
+};
+
+addStudent = () => {
+  console.log("Adding a New Student ..\n");
+  const sql = `INSERT INTO Student (StudentName, GradeNumber, ClassroomID, TeacherID) VALUES (?, ?, ?, ?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "StudentName",
+        message: "What is the Student's name?",
+      },
+      {
+        type: "input",
+        name: "GradeNumber",
+        message: "What Grade is the student in?",
+      },
+      {
+        type: "input",
+        name: "ClassroomID",
+        message: "What Classroom is the student in?",
+      },
+      {
+        type: "input",
+        name: "TeacherID",
+        message: "Which teacher is the student assidned to? (TeacherID)",
+      },
+    ])
+    .then((answers) => {
+      const { StudentName, GradeNumber, ClassroomID, TeacherID } = answers;
+      connection.query(
+        sql,
+        [StudentName, GradeNumber, ClassroomID, TeacherID],
+        (err, resp) => {
+          if (err) throw err;
+          console.log("New Student Added");
+          viewStudents();
+        }
+      );
+    });
+};
+
+addSubject = () => {
+  console.log("Adding a New Subject ..\n");
+  const sql = `INSERT INTO Subject (SubjectName) VALUES (?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "SubjectName",
+        message: "What Subject is being added?",
+      },
+    ])
+    .then((answers) => {
+      const { SubjectName } = answers;
+      connection.query(sql, [SubjectName], (err, resp) => {
+        if (err) throw err;
+        console.log("New Subject Added");
+        viewSubjects();
+      });
+    });
+};
+
+addMark = () => {
+  console.log("Adding a New Mark ..\n");
+  const sql = `INSERT INTO Mark (StudentID, SubjectID, MarkValue) VALUES (?, ?, ?)`;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "StudentID",
+        message: "What is the StudentID?",
+      },
+      {
+        type: "input",
+        name: "SubjectID",
+        message: "What is the SubjectID for this mark?",
+      },
+      {
+        type: "input",
+        name: "MarkValue",
+        message: "What is the Mark? (0-100)",
+      },
+    ])
+    .then((answers) => {
+      const { StudentID, SubjectID, MarkValue } = answers;
+      connection.query(sql, [StudentID, SubjectID, MarkValue], (err, resp) => {
+        if (err) throw err;
+        console.log("New Mark Added");
+        viewMarks();
+      });
+    });
 };
