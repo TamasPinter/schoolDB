@@ -31,9 +31,9 @@ const mainMenu = async () => {
             "View Information",
             "Add An Item",
             "Update an Item",
+            "Delete an Item",
             "Exit\n",
           ],
-          pageSize: 15,
         },
       ])
       .then((answers) => {
@@ -46,6 +46,9 @@ const mainMenu = async () => {
         }
         if (choices === "Update an Item") {
           updateItemSubMenu();
+        }
+        if (choices === "Delete an Item") {
+          deleteItemSubMenu();
         }
         if (choices === "Exit") {
           connection.end();
@@ -215,8 +218,7 @@ ORDER BY
   });
 };
 
-// Add a submenu for View Student Information
-const viewStudentInformationSubMenu = async () => {
+viewStudentInformationSubMenu = async () => {
   try {
     const answers = await inquirer.prompt([
       {
@@ -1478,6 +1480,306 @@ updateMark = () => {
                     }
                   );
                 });
+            });
+        });
+      });
+  });
+};
+
+deleteItemSubMenu = async () => {
+  try {
+    const answers = await inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "choices",
+          message: "Select a field to Delete",
+          choices: [
+            "Delete A School",
+            "Delete A Grade",
+            "Delete A Classroom",
+            "Delete A Teacher",
+            "Delete A Student",
+            "Delete A Subject",
+            "Delete A Mark",
+            "Go Back\n",
+          ],
+        },
+      ])
+      .then((answers) => {
+        const { choices } = answers;
+        if (choices === "Delete A School") {
+          deleteSchool();
+        }
+        if (choices === "Delete A Grade") {
+          deleteGrade();
+        }
+        if (choices === "Delete A Classroom") {
+          deleteClassroom();
+        }
+        if (choices === "Delete A Teacher") {
+          deleteTeacher();
+        }
+        if (choices === "Delete A Student") {
+          deleteStudent();
+        }
+        if (choices === "Delete A Subject") {
+          deleteSubject();
+        }
+        if (choices === "Delete A Mark") {
+          deleteMark();
+        }
+        if (choices === "Go Back") {
+          mainMenu();
+        }
+      });
+  } catch (error) {
+    console.log(error);
+    mainMenu();
+  }
+};
+
+deleteSchool = () => {
+  console.log("Deleting A School ..\n");
+  const schoolsql = `SELECT * FROM School`;
+  connection.query(schoolsql, (err, resp) => {
+    if (err) throw err;
+
+    const schools = resp.map(({ SchoolID, Name }) => ({
+      name: Name,
+      value: SchoolID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_school_SchoolID",
+          message: "Which School would you like to delete?",
+          choices: schools,
+        },
+      ])
+      .then((answers) => {
+        const { selected_school_SchoolID } = answers;
+        const sql = `DELETE FROM School WHERE SchoolID =?`;
+        connection.query(sql, [selected_school_SchoolID], (err, resp) => {
+          if (err) throw err;
+          console.log("School has been deleted");
+          viewSchoolInfo();
+        });
+      });
+  });
+};
+
+deleteGrade = () => {
+  console.log("Deleting A School ..\n");
+  const gradesql = `SELECT * FROM Grade`;
+  connection.query(gradesql, (err, resp) => {
+    if (err) throw err;
+
+    const grades = resp.map(({ GradeNumber, SchoolID, GradeID }) => ({
+      name: `Grade: ${GradeNumber}, SchoolID: ${SchoolID}`,
+      value: GradeID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_grade_GradeID",
+          message: "Which Grade would you like to delete?",
+          choices: grades,
+        },
+      ])
+      .then((answers) => {
+        const { selected_grade_GradeID } = answers;
+        const sql = `DELETE FROM Grade WHERE GradeID =?`;
+        connection.query(sql, [selected_grade_GradeID], (err, resp) => {
+          if (err) throw err;
+          console.log("Grade has been deleted");
+          viewGradeInfo();
+        });
+      });
+  });
+};
+
+deleteClassroom = () => {
+  console.log("Deleting A Classroom ..\n");
+  const classroomsql = `SELECT * FROM Classroom`;
+  connection.query(classroomsql, (err, resp) => {
+    if (err) throw err;
+
+    const classrooms = resp.map(({ GradeNumber, ClassroomID }) => ({
+      name: `Grade: ${GradeNumber}, ClassroomID: ${ClassroomID}`,
+      value: ClassroomID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_classroom_ClassroomID",
+          message: "Which Classroom would you like to delete?",
+          choices: classrooms,
+        },
+      ])
+      .then((answers) => {
+        const { selected_classroom_ClassroomID } = answers;
+        const sql = `DELETE FROM Classroom WHERE ClassroomID = ?`;
+        connection.query(sql, [selected_classroom_ClassroomID], (err, resp) => {
+          if (err) throw err;
+          console.log("Classroom has been deleted");
+          viewClassInfo();
+        });
+      });
+  });
+};
+
+deleteTeacher = () => {
+  console.log("Deleting A Teacher ..\n");
+  const teachersql = `SELECT * FROM Teacher`;
+  connection.query(teachersql, (err, resp) => {
+    if (err) throw err;
+
+    const teachers = resp.map(({ TeacherName, TeacherID }) => ({
+      name: TeacherName,
+      value: TeacherID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_teacher_TeacherID",
+          message: "Which teacher would you like to delete?",
+          choices: teachers,
+        },
+      ])
+      .then((answers) => {
+        const { selected_teacher_TeacherID } = answers;
+        const sql = `DELETE FROM Teacher WHERE TeacherID = ?`;
+        connection.query(sql, [selected_teacher_TeacherID], (err, resp) => {
+          if (err) throw err;
+          console.log("Teacher has been deleted");
+          viewTeacherInfo();
+        });
+      });
+  });
+};
+
+deleteStudent = () => {
+  console.log("Deleting A Student ..\n");
+  const studentsql = `SELECT * FROM Student`;
+  connection.query(studentsql, (err, resp) => {
+    if (err) throw err;
+
+    const students = resp.map(({ StudentName, StudentID }) => ({
+      name: StudentName,
+      value: StudentID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_student_StudentID",
+          message: "Which student would you like to delete?",
+          choices: students,
+        },
+      ])
+      .then((answers) => {
+        const { selected_student_StudentID } = answers;
+        const sql = `DELETE FROM Student WHERE StudentID = ?`;
+        connection.query(sql, [selected_student_StudentID], (err, resp) => {
+          if (err) throw err;
+          console.log("Student has been deleted");
+          viewStudents();
+        });
+      });
+  });
+};
+
+deleteSubject = () => {
+  console.log("Deleting A Subject ..\n");
+  const subjectsql = `SELECT * FROM Subject`;
+  connection.query(subjectsql, (err, resp) => {
+    if (err) throw err;
+
+    const subjects = resp.map(({ SubjectName, SubjectID }) => ({
+      name: SubjectName,
+      value: SubjectID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_subject_SubjectID",
+          message: "Which Subject would you like to delete?",
+          choices: subjects,
+        },
+      ])
+      .then((answers) => {
+        const { selected_subject_SubjectID } = answers;
+        const sql = `DELETE FROM Subject WHERE SubjectID = ?`;
+        connection.query(sql, [selected_subject_SubjectID], (err, resp) => {
+          if (err) throw err;
+          console.log("Subject has been deleted");
+          viewSubjects();
+        });
+      });
+  });
+};
+
+deleteMark = () => {
+  console.log("Deleting A Mark ..\n");
+  const studentsql = `SELECT * FROM Student`;
+  connection.query(studentsql, (err, resp) => {
+    if (err) throw err;
+
+    const students = resp.map(({ StudentName, StudentID }) => ({
+      name: StudentName,
+      value: StudentID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_student_StudentID",
+          message: "Which student would you like to delete a mark for?",
+          choices: students,
+        },
+      ])
+      .then((answers) => {
+        const { selected_student_StudentID } = answers;
+
+        const marksql = `SELECT * FROM Mark WHERE StudentID = ?`;
+        connection.query(marksql, [selected_student_StudentID], (err, resp) => {
+          if (err) throw err;
+
+          const marks = resp.map(({ MarkID, MarkValue, SubjectID }) => ({
+            name: `MarkID: ${MarkID}, MarkValue: ${MarkValue}, SubjectID: ${SubjectID}`,
+            value: MarkID,
+          }));
+
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "selected_mark_MarkID",
+                message: "Which mark would you like to delete?",
+                choices: marks,
+              },
+            ])
+            .then((answers) => {
+              const { selected_mark_MarkID } = answers;
+              const sql = `DELETE FROM Mark WHERE MarkID = ?`;
+              connection.query(sql, [selected_mark_MarkID], (err, resp) => {
+                if (err) throw err;
+                console.log("Mark has been deleted");
+                viewMarks();
+              });
             });
         });
       });
