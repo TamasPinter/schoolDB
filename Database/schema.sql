@@ -36,7 +36,10 @@ CREATE TABLE Teacher (
     Phone VARCHAR(255) NOT NULL,
     GradeNumber INT,
     INDEX (GradeNumber),
-    CONSTRAINT fk_Teacher_Grade FOREIGN KEY (GradeNumber) REFERENCES Grade(GradeID) ON DELETE SET NULL
+    CONSTRAINT fk_Teacher_Grade FOREIGN KEY (GradeNumber) REFERENCES Grade(GradeID) ON DELETE SET NULL,
+    ClassroomID INT DEFAULT 0,
+    INDEX (ClassroomID),
+    CONSTRAINT fk_Teacher_Classroom FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID)
 );
 
 CREATE TABLE Student (
@@ -71,13 +74,5 @@ CREATE TABLE Mark (
     
 );
 
-ALTER TABLE Teacher
-ADD COLUMN ClassroomID INT,
-ADD INDEX (ClassroomID),
-ADD FOREIGN KEY (ClassroomID) REFERENCES Classroom(ClassroomID);
 
-ALTER TABLE Classroom
-ADD COLUMN TeacherID INT,
-ADD INDEX (TeacherID),
-ADD FOREIGN KEY (TeacherID) REFERENCES Teacher(TeacherID);
 

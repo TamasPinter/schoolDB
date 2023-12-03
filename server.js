@@ -104,7 +104,15 @@ ORDER BY
 
 viewClassInfo = () => {
   console.log("View Classroom Information");
-  const sql = `SELECT * FROM Classroom`;
+  const sql = `SELECT
+  c.ClassroomID,
+  c.GradeNumber,
+  t.TeacherName AS AssignedTeacher,
+  t.Email AS TeacherEmail
+FROM
+  Classroom c
+  LEFT JOIN Teacher t ON c.ClassroomID = t.ClassroomID
+`;
   connection.query(sql, (err, resp) => {
     if (err) throw err;
     console.table(resp);
@@ -684,7 +692,7 @@ addClassroom = () => {
 
 addTeacher = () => {
   console.log("Adding a New Teacher ..\n");
-  const sql = `INSERT INTO Teacher (TeacherName, Email, Phone, GradeNumber) VALUES (?, ?, ?, ?)`;
+  const sql = `INSERT INTO Teacher (TeacherName, Email, Phone, GradeNumber, ClassroomID) VALUES (?, ?, ?, ?, ?)`;
   inquirer
     .prompt([
       {
@@ -707,12 +715,17 @@ addTeacher = () => {
         name: "GradeNumber",
         message: "What Grade is the Teacher teaching?",
       },
+      {
+        type: "input",
+        name: "ClassroomID",
+        message: "What is the ClassroomID this teacher is in charge of?",
+      },
     ])
     .then((answers) => {
-      const { TeacherName, Email, Phone, GradeNumber } = answers;
+      const { TeacherName, Email, Phone, GradeNumber, ClassroomID } = answers;
       connection.query(
         sql,
-        [TeacherName, Email, Phone, GradeNumber],
+        [TeacherName, Email, Phone, GradeNumber, ClassroomID],
         (err, resp) => {
           if (err) throw err;
           console.log("New Teacher Added");
@@ -980,6 +993,465 @@ updateSchool = () => {
               }
             );
           });
+      });
+  });
+};
+
+updateGrade = () => {
+  console.log("Updating a Grade ..\n");
+  const gradesql = `SELECT * FROM Grade`;
+  connection.query(gradesql, (err, resp) => {
+    if (err) throw err;
+    const grades = resp.map(({ GradeNumber, GradeID, SchoolID }) => ({
+      name: `Grade: ${GradeNumber}, SchoolID: ${SchoolID}`,
+      value: GradeID,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_grade_GradeID",
+          message: "Which Grade would you like to update?",
+          choices: grades,
+        },
+      ])
+      .then((answers) => {
+        const { selected_grade_GradeID } = answers;
+        const selectedGrade = resp.find(
+          (grade) => grade.GradeID === selected_grade_GradeID
+        );
+
+        const updateFields = [
+          selectedGrade.GradeNumber && "GradeNumber = ?",
+          selectedGrade.SchoolID && "SchoolID = ?",
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        const sql = `UPDATE Grade SET ${updateFields} WHERE GradeID = ?`;
+
+        const values = [];
+        if (selectedGrade.GradeNumber) values.push(selectedGrade.GradeNumber);
+        if (selectedGrade.SchoolID) values.push(selectedGrade.SchoolID);
+        values.push(selectedGrade.GradeID);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "GradeNumber",
+              message: "What is the Grade Number?",
+            },
+            {
+              type: "input",
+              name: "SchoolID",
+              message: "What SchoolID does this grade belong to?",
+            },
+          ])
+          .then((answers) => {
+            const { GradeNumber, SchoolID } = answers;
+            connection.query(
+              sql,
+              [
+                GradeNumber || selectedGrade.GradeNumber,
+                SchoolID || selectedGrade.SchoolID,
+                selectedGrade.GradeID,
+              ],
+              (err, resp) => {
+                if (err) throw err;
+                console.log("Grade has been updated");
+                viewGradeInfo();
+              }
+            );
+          });
+      });
+  });
+};
+
+updateClassroom = () => {
+  console.log("Updating a Classroom ..\n");
+  const classroomsql = `SELECT * FROM Classroom`;
+  connection.query(classroomsql, (err, resp) => {
+    if (err) throw err;
+    const classrooms = resp.map(({ GradeNumber, ClassroomID }) => ({
+      name: `Grade: ${GradeNumber}, ClassroomID: ${ClassroomID}`,
+      value: ClassroomID,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_classroom_ClassroomID",
+          message: "Which Classroom would you like to update?",
+          choices: classrooms,
+        },
+      ])
+      .then((answers) => {
+        const { selected_classroom_ClassroomID } = answers;
+        const selectedClassroom = resp.find(
+          (classroom) =>
+            classroom.ClassroomID === selected_classroom_ClassroomID
+        );
+
+        const updateFields = [
+          selectedClassroom.GradeNumber && "GradeNumber = ?",
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        const sql = `UPDATE Classroom SET ${updateFields} WHERE ClassroomID = ?`;
+
+        const values = [];
+        if (selectedClassroom.GradeNumber)
+          values.push(selectedClassroom.GradeNumber);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "GradeNumber",
+              message: "What is the Grade Number?",
+            },
+          ])
+          .then((answers) => {
+            const { GradeNumber } = answers;
+            connection.query(
+              sql,
+              [
+                GradeNumber || selectedClassroom.GradeNumber,
+                selectedClassroom.ClassroomID,
+              ],
+              (err, resp) => {
+                if (err) throw err;
+                console.log("Classroom has been updated");
+                viewClassInfo();
+              }
+            );
+          });
+      });
+  });
+};
+
+updateTeacher = () => {
+  console.log("Updating a Teacher ..\n");
+  const teachersql = `SELECT * FROM Teacher`;
+  connection.query(teachersql, (err, resp) => {
+    if (err) throw err;
+    const teachers = resp.map(({ TeacherName, TeacherID }) => ({
+      name: TeacherName,
+      value: TeacherID,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_teacher_TeacherID",
+          message: "Which teacher would you like to update?",
+          choices: teachers,
+        },
+      ])
+      .then((answers) => {
+        const { selected_teacher_TeacherID } = answers;
+        const selectedTeacher = resp.find(
+          (teacher) => teacher.TeacherID === selected_teacher_TeacherID
+        );
+
+        const updateFields = [
+          selectedTeacher.TeacherName && "TeacherName = ?",
+          selectedTeacher.Email && "Email = ?",
+          selectedTeacher.Phone && "Phone =?",
+          selectedTeacher.GradeNumber && "gradeNumber = ?",
+          selectedTeacher.ClassroomID && "ClassroomID = ?",
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        const sql = `UPDATE Teacher SET ${updateFields} WHERE TeacherID = ?`;
+
+        const values = [];
+        if (selectedTeacher.TeacherName)
+          values.push(selectedTeacher.TeacherName);
+        if (selectedTeacher.Email) values.push(selectedTeacher.Email);
+        if (selectedTeacher.Phone) values.push(selectedTeacher.Phone);
+        if (selectedTeacher.GradeNumber)
+          values.push(selectedTeacher.GradeNumber);
+        if (selectedTeacher.ClassroomID)
+          values.push(selectedTeacher.ClassroomID);
+
+        values.push(selectedTeacher.TeacherID);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "TeacherName",
+              message: "What is the Teacher's name?",
+            },
+            {
+              type: "input",
+              name: "Email",
+              message: "What is the teacher's email?",
+            },
+            {
+              type: "input",
+              name: "Phone",
+              message: "What is the teacher's Phone Number?",
+            },
+            {
+              type: "input",
+              name: "GradeNumber",
+              message: "What Grade is the Teacher teaching?",
+            },
+            {
+              type: "input",
+              name: "ClassroomID",
+              message: "What is the ClassroomID this teacher is in charge of?",
+            },
+          ])
+          .then((answers) => {
+            const { TeacherName, Email, Phone, GradeNumber, ClassroomID } =
+              answers;
+            connection.query(
+              sql,
+              [
+                TeacherName || selectedTeacher.TeacherName,
+                Email || selectedTeacher.Email,
+                Phone || selectedTeacher.Phone,
+                GradeNumber || selectedTeacher.GradeNumber,
+                ClassroomID || selectedTeacher.ClassroomID,
+                selectedTeacher.TeacherID,
+              ],
+
+              (err, resp) => {
+                if (err) throw err;
+                console.log("Teacher has been updated");
+                viewTeacherInfo();
+              }
+            );
+          });
+      });
+  });
+};
+
+updateStudent = () => {
+  console.log("Updating a Student ..\n");
+  const studentsql = `SELECT * FROM Student`;
+  connection.query(studentsql, (err, resp) => {
+    if (err) throw err;
+    const students = resp.map(({ StudentName, StudentID }) => ({
+      name: StudentName,
+      value: StudentID,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_student_StudentID",
+          message: "Which student would you like to update?",
+          choices: students,
+        },
+      ])
+      .then((answers) => {
+        const { selected_student_StudentID } = answers;
+        const selectedStudent = resp.find(
+          (student) => student.StudentID === selected_student_StudentID
+        );
+
+        const updateFields = [
+          selectedStudent.StudentName && "StudentName = ?",
+          selectedStudent.GradeNumber && "GradeNumber = ?",
+          selectedStudent.ClassroomID && "ClassroomID = ?",
+          selectedStudent.TeacherID && "TeacherID = ?",
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        const sql = `UPDATE Student SET ${updateFields} WHERE StudentID = ?`;
+
+        const values = [];
+        if (selectedStudent.StudentName)
+          values.push(selectedStudent.StudentName);
+        if (selectedStudent.GradeNumber)
+          values.push(selectedStudent.GradeNumber);
+        if (selectedStudent.ClassroomID)
+          values.push(selectedStudent.ClassroomID);
+        if (selectedStudent.TeacherID) values.push(selectedStudent.TeacherID);
+        values.push(selectedStudent.StudentID);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "StudentName",
+              message: "What is the student's name?",
+            },
+            {
+              type: "input",
+              name: "GradeNumber",
+              message: "What grade is the student in?",
+            },
+            {
+              type: "input",
+              name: "ClassroomID",
+              message: "What classroom is the student in?",
+            },
+            {
+              type: "input",
+              name: "TeacherID",
+              message: "Which teacher is the student assigned to?",
+            },
+          ])
+          .then((answers) => {
+            const { StudentName, GradeNumber, ClassroomID, TeacherID } =
+              answers;
+            connection.query(
+              sql,
+              [
+                StudentName || selectedStudent.StudentName,
+                GradeNumber || selectedStudent.GradeNumber,
+                ClassroomID || selectedStudent.ClassroomID,
+                TeacherID || selectedStudent.TeacherID,
+                selectedStudent.StudentID,
+              ],
+              (err, resp) => {
+                if (err) throw err;
+                console.log("Student has been updated");
+                viewStudents();
+              }
+            );
+          });
+      });
+  });
+};
+
+updateSubject = () => {
+  console.log("Updating a Subject ..\n");
+  const subjectsql = `SELECT * FROM Subject`;
+  connection.query(subjectsql, (err, resp) => {
+    if (err) throw err;
+    const subjects = resp.map(({ SubjectName, SubjectID }) => ({
+      name: SubjectName,
+      value: SubjectID,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_subject_SubjectID",
+          message: "Which subject would you like to update?",
+          choices: subjects,
+        },
+      ])
+      .then((answers) => {
+        const { selected_subject_SubjectID } = answers;
+        const selectedSubject = resp.find(
+          (subject) => subject.SubjectID === selected_subject_SubjectID
+        );
+
+        const updateFields = [selectedSubject.SubjectName && "SubjectName = ?"]
+          .filter(Boolean)
+          .join(", ");
+
+        const sql = `UPDATE Subject SET ${updateFields} WHERE SubjectID = ?`;
+
+        const values = [];
+        if (selectedSubject.SubjectName)
+          values.push(selectedSubject.SubjectName);
+        values.push(selectedSubject.SubjectID);
+
+        inquirer
+          .prompt([
+            {
+              type: "input",
+              name: "SubjectName",
+              message: "What is the Subject's name?",
+            },
+          ])
+          .then((answers) => {
+            const { SubjectName } = answers;
+            connection.query(
+              sql,
+              [
+                SubjectName || selectedSubject.SubjectName,
+                selectedSubject.SubjectID,
+              ],
+              (err, resp) => {
+                if (err) throw err;
+                console.log("Subject has been updated");
+                viewSubjects();
+              }
+            );
+          });
+      });
+  });
+};
+
+updateMark = () => {
+  console.log("Updating a Mark ..\n");
+  const studentsql = `SELECT * FROM Student`;
+  connection.query(studentsql, (err, resp) => {
+    if (err) throw err;
+    const students = resp.map(({ StudentName, StudentID }) => ({
+      name: StudentName,
+      value: StudentID,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "selected_student_StudentID",
+          message: "Which student would you like to update a mark for?",
+          choices: students,
+        },
+      ])
+      .then((answers) => {
+        const { selected_student_StudentID } = answers;
+
+        const marksql = `SELECT * FROM Mark WHERE StudentID = ?`;
+        connection.query(marksql, [selected_student_StudentID], (err, resp) => {
+          if (err) throw err;
+
+          const marks = resp.map(({ MarkID, MarkValue, SubjectID }) => ({
+            name: `MarkID: ${MarkID}, MarkValue: ${MarkValue}, SubjectID: ${SubjectID}`,
+            value: MarkID,
+          }));
+
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "selected_mark_MarkID",
+                message: "Which mark would you like to update?",
+                choices: marks,
+              },
+            ])
+            .then((answers) => {
+              const { selected_mark_MarkID } = answers;
+
+              inquirer
+                .prompt([
+                  {
+                    type: "input",
+                    name: "MarkValue",
+                    message: "What is the new Mark Value?",
+                  },
+                ])
+                .then((answers) => {
+                  const { MarkValue } = answers;
+                  const sql = `UPDATE Mark SET MarkValue = ? WHERE MarkID = ?`;
+                  connection.query(
+                    sql,
+                    [MarkValue, selected_mark_MarkID],
+                    (err, resp) => {
+                      if (err) throw err;
+                      console.log("Mark has been updated");
+                      viewMarks();
+                    }
+                  );
+                });
+            });
+        });
       });
   });
 };

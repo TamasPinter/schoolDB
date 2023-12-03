@@ -29,40 +29,24 @@ VALUES (1),
        (8),
        (8);
 
-INSERT INTO Teacher (TeacherName, Email, Phone, ClassroomID, GradeNumber)
+INSERT INTO Teacher (TeacherName, Email, Phone, GradeNumber, ClassroomID)
 VALUES ('Aliza Bounty', 'BountyAliz@edu.ca', '519-805-9021', 1, 1),
-       ('Brenda June', 'JuneB@edu.ca', '614-809-7624', 2, 1),
-       ('George Rune', 'RuneG@edu.ca', '519-908-1122', 3, 2),
-       ('Helen Sharpe', 'SharpH@edu.ca', '519-234-1324', 4, 2),
-       ('Ivar Rolf', 'RolfI@edu.ca', '647-909-1982', 5, 3),
-       ('Jenny Poom', 'PoomJ@edu.ca', '565-000-1298', 6, 3),
-       ('Karl Marx', 'MarcK@edu.ca', '675-709-2265', 7, 4),
-       ('George Orwell', 'OrwellG@edu.ca', '555-555-5551', 8, 4),
-       ('Nancy Drew', 'DrewN@edu.ca', '111-111-1123', 9, 5),
-       ('Phillip Morris', 'MorrisP@edu.ca', '212-345-6754', 10, 5),
-       ('Wheetus Wallow', 'WallowW@edu.ca', '456-123-3465', 11, 6),
-       ('Alfred Milona', 'MolinaA@edu.ca', '123-890-9099', 12, 6),
-       ('Brenda Jude', 'JudeB@edu.ca', '789-345-1287', 13, 7),
-       ('Lucy Liu', 'LiuL@edu.ca', '652-234-8097', 14, 7),
-       ('Oliver West', 'WestO@edu.ca', '675-012-5643', 15, 8),
-       ('Peter Parker', 'ParkerP@edu.ca', '999-999-9911', 16, 8);
+       ('Brenda June', 'JuneB@edu.ca', '614-809-7624', 1, 2),
+       ('George Rune', 'RuneG@edu.ca', '519-908-1122', 2, 3),
+       ('Helen Sharpe', 'SharpH@edu.ca', '519-234-1324', 2, 4),
+       ('Ivar Rolf', 'RolfI@edu.ca', '647-909-1982', 3, 5),
+       ('Jenny Poom', 'PoomJ@edu.ca', '565-000-1298', 3, 6),
+       ('Karl Marx', 'MarcK@edu.ca', '675-709-2265', 4, 7),
+       ('George Orwell', 'OrwellG@edu.ca', '555-555-5551', 4, 8),
+       ('Nancy Drew', 'DrewN@edu.ca', '111-111-1123', 5, 9),
+       ('Phillip Morris', 'MorrisP@edu.ca', '212-345-6754', 5, 10),
+       ('Wheetus Wallow', 'WallowW@edu.ca', '456-123-3465', 6, 11),
+       ('Alfred Milona', 'MolinaA@edu.ca', '123-890-9099', 6, 12),
+       ('Brenda Jude', 'JudeB@edu.ca', '789-345-1287', 7, 13),
+       ('Lucy Liu', 'LiuL@edu.ca', '652-234-8097', 7, 14),
+       ('Oliver West', 'WestO@edu.ca', '675-012-5643', 8, 15),
+       ('Peter Parker', 'ParkerP@edu.ca', '999-999-9911', 8, 16);
 
-UPDATE Classroom SET TeacherID = 1 WHERE ClassroomID = 1;
-UPDATE Classroom SET TeacherID = 2 WHERE ClassroomID = 2;
-UPDATE Classroom SET TeacherID = 3 WHERE ClassroomID = 3;
-UPDATE Classroom SET TeacherID = 4 WHERE ClassroomID = 4;
-UPDATE Classroom SET TeacherID = 5 WHERE ClassroomID = 5;
-UPDATE Classroom SET TeacherID = 6 WHERE ClassroomID = 6;
-UPDATE Classroom SET TeacherID = 7 WHERE ClassroomID = 7;
-UPDATE Classroom SET TeacherID = 8 WHERE ClassroomID = 8;
-UPDATE Classroom SET TeacherID = 9 WHERE ClassroomID = 9;
-UPDATE Classroom SET TeacherID = 10 WHERE ClassroomID = 10;
-UPDATE Classroom SET TeacherID = 11 WHERE ClassroomID = 11;
-UPDATE Classroom SET TeacherID = 12 WHERE ClassroomID = 12;
-UPDATE Classroom SET TeacherID = 13 WHERE ClassroomID = 13;
-UPDATE Classroom SET TeacherID = 14 WHERE ClassroomID = 14;
-UPDATE Classroom SET TeacherID = 15 WHERE ClassroomID = 15;
-UPDATE Classroom SET TeacherID = 16 WHERE ClassroomID = 16;
 
 INSERT INTO Student (StudentName, GradeNumber, ClassroomID, TeacherID)
 VALUES ('Cindy Moon', 1, 1, 1),
