@@ -67,6 +67,30 @@ viewSchoolInfo = () => {
   });
 };
 
+viewStudentGrades = () => {
+  console.log("View Student Grades");
+  const sql = `SELECT
+  s.StudentID,
+  s.StudentName,
+  g.GradeNumber,
+  AVG(m.MarkValue) AS AverageMark
+FROM
+  Student s
+JOIN
+  Mark m ON s.StudentID = m.StudentID
+JOIN
+  Grade g ON s.GradeNumber = g.GradeNumber
+GROUP BY
+  s.StudentID, s.StudentName, g.GradeNumber
+ORDER BY
+  GradeNumber, AverageMark DESC`;
+  connection.query(sql, (err, resp) => {
+    if (err) throw err;
+    console.table(resp);
+    mainMenu();
+  });
+};
+
 viewGradeInfo = () => {
   console.log("View Grade Information");
   const sql = `SELECT * FROM Grade`;
@@ -490,6 +514,7 @@ viewItemSubMenu = async () => {
             "View All Marks",
             "View Teacher Stats",
             "View Student Information",
+            "View Student Grades",
             "Go Back",
           ],
         },
@@ -525,6 +550,9 @@ viewItemSubMenu = async () => {
         }
         if (choices === "View Student Information") {
           viewStudentInformationSubMenu();
+        }
+        if (choices === "View Student Grades") {
+          viewStudentGrades();
         }
         if (choices === "Go Back") {
           mainMenu();
